@@ -23,4 +23,24 @@ class AdminLoginViewController: UIViewController {
         
         setupUI()
     }
+    // MARK: - UI Setup
+    func setupUI() {
+        let radius: CGFloat = 20
+        
+        emailView?.layer.cornerRadius = radius
+        emailView?.clipsToBounds = true
+        
+        passwordView?.layer.cornerRadius = radius
+        passwordView?.clipsToBounds = true
+        
+        signInButton?.layer.cornerRadius = radius
+        signInButton?.clipsToBounds = true
+        
+        registerButton?.layer.cornerRadius = radius
+        registerButton?.clipsToBounds = true
+        
+        emailTextField.placeholder = "Enter admin email"
+        passwordTextField.placeholder = "Enter password"
+        passwordTextField.isSecureTextEntry = true
+    }
     
