@@ -43,4 +43,102 @@ class AdminLoginViewController: UIViewController {
         passwordTextField.placeholder = "Enter password"
         passwordTextField.isSecureTextEntry = true
     }
+    // MARK: - Navigation
+    private func navigateToSignUp() {
+        let signUpVC = AdminSignUpViewController(nibName: "AdminSignUpViewController", bundle: nil)
+        navigationController?.pushViewController(signUpVC, animated: true)
+    }
+    
+    func handleLoginSuccess() {
+        print("✅ Admin logged in successfully")
+        
+        let dashboardVC = AdminDashboardViewController()
+        navigationController?.pushViewController(dashboardVC, animated: true)
+    }
+    
+    // MARK: - Actions
+    @IBAction func signInTapped(_ sender: UIButton) {
+        print("\n===========================================")
+        print("🎯 ADMIN LOGIN STARTED (SUPABASE)")
+        print("===========================================")
+        
+        view.endEditing(true)
+        
+        guard let email = emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(), !email.isEmpty else {
+            print("❌ Validation failed: Email is empty")
+            showAlert(title: "Error", message: "Please enter your email")
+            return
+        }
+        print("✅ Email:", email)
+        
+        guard let password = passwordTextField.text, !password.isEmpty else {
+            print("❌ Validation failed: Password is empty")
+            showAlert(title: "Error", message: "Please enter your password")
+            return
+        }
+        print("✅ Password provided")
+        
+        print("\n🚀 Starting Supabase authentication...")
+        print("===========================================\n")
+        
+        signInButton.isEnabled = false
+        showLoadingIndicator()
+        
+        Task {
+            do {
+                // ✅ Verify admin credentials in Supabase
+                let isValid = try await SupabaseManager.shared.verifyAdmin(email: email, password: password)
+                
+                guard isValid else {
+                    await MainActor.run {
+                        self.hideLoadingIndicator()
+                        self.signInButton.isEnabled = true
+                        self.showAlert(title: "Login Failed", message: "Invalid email or password")
+                    }
+                    return
+                }
+                
+                print("✅ Admin credentials verified")
+                
+                // Get institute info
+                if let institute = try await SupabaseManager.shared.getInstitute(byAdminEmail: email) {
+                    print("✅ Institute found:", institute.name)
+                    
+                    // Store session
+                    UserDefaults.standard.set(email, forKey: "admin_email")
+                    UserDefaults.standard.set(institute.name, forKey: "admin_institute_name")
+                    UserDefaults.standard.set(institute.domain, forKey: "admin_institute_domain")
+                    UserDefaults.standard.set(true, forKey: "is_admin")
+                }
+                
+                await MainActor.run {
+                    self.hideLoadingIndicator()
+                    self.signInButton.isEnabled = true
+                    self.handleLoginSuccess()
+                }
+                
+            } catch {
+                print("❌ Login error:", error.localizedDescription)
+                
+                await MainActor.run {
+                    self.hideLoadingIndicator()
+                    self.signInButton.isEnabled = true
+                    self.showAlert(title: "Login Failed", message: error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    @IBAction func registerTapped(_ sender: Any) {
+        print("Register button tapped. Navigating to AdminSignUpViewController.")
+        navigateToSignUp()
+    }
+    
+    @IBAction func backButton(_ sender: Any) {
+        if let navigationController = navigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
+    }
     
