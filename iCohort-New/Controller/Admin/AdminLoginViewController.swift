@@ -141,4 +141,36 @@ class AdminLoginViewController: UIViewController {
             dismiss(animated: true, completion: nil)
         }
     }
+    // MARK: - Helper Methods
     
+    private func showLoadingIndicator() {
+        DispatchQueue.main.async {
+            let indicator = UIActivityIndicatorView(style: .large)
+            indicator.center = self.view.center
+            indicator.startAnimating()
+            self.view.addSubview(indicator)
+            self.view.isUserInteractionEnabled = false
+            self.loadingIndicator = indicator
+            print("🔄 Loading indicator shown")
+        }
+    }
+    
+    private func hideLoadingIndicator() {
+        DispatchQueue.main.async {
+            self.loadingIndicator?.stopAnimating()
+            self.loadingIndicator?.removeFromSuperview()
+            self.view.isUserInteractionEnabled = true
+            self.loadingIndicator = nil
+            print("✋ Loading indicator hidden")
+        }
+    }
+    
+    func showAlert(title: String, message: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }
+    }
+}
+
