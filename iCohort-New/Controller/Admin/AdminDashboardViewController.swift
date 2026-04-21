@@ -1084,3 +1084,27 @@ class StatisticCardView: UIControl {
         countLabel.textColor = .label
         countLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(countLabel)
+        
+        titleLabel.text = title
+        titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        titleLabel.textColor = .secondaryLabel
+        titleLabel.numberOfLines = 0
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(titleLabel)
+        
+        NSLayoutConstraint.activate([
+            iconImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            iconImageView.widthAnchor.constraint(equalToConstant: 32),
+            iconImageView.heightAnchor.constraint(equalToConstant: 32),
+            
+            countLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 8),
+            countLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            countLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            
+            titleLabel.topAnchor.constraint(equalTo: countLabel.bottomAnchor, constant: 4),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16)
+        ])
+    }
