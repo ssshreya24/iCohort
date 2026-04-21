@@ -1108,3 +1108,21 @@ class StatisticCardView: UIControl {
             titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16)
         ])
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateCount(_ count: String) {
+        countLabel.text = count
+    }
+    
+    override var isHighlighted: Bool {
+        didSet {
+            UIView.animate(withDuration: 0.1) {
+                self.alpha = self.isHighlighted ? 0.7 : 1.0
+                self.transform = self.isHighlighted ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
+            }
+        }
+    }
+}
